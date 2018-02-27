@@ -198,27 +198,157 @@ public class Offer {
 		return floor;
 	}
 
-	//9.变态跳台阶
-	  public int JumpFloorII(int target) {
-			if (target < 1)
-				System.out.println("台阶输入不正确");
-			  int floor = 1;
-	            for (int i = 2; i <= target; i++) {
-	                floor = 2* floor;
+	// 9.变态跳台阶
+	public int JumpFloorII(int target) {
+		if (target < 1)
+			System.out.println("台阶输入不正确");
+		int floor = 1;
+		for (int i = 2; i <= target; i++) {
+			floor = 2 * floor;
 
-	            }	
-	        return floor;
-			
-	    }
-	  
-	//10.二进制中1的个数
-	  public int NumberOf1(int n) {
-      //将该整数-1 并与原整数进行与操作，会将原整数最右边的1变为0.有多少个1，则进行多少次操作。        
-      int count=0;
-      while(n!=0){
-          n=(n-1)&n;
-          count++;
-      }        
-      return count;
-  }
+		}
+		return floor;
+
+	}
+
+	// 10.二进制中1的个数
+	public int NumberOf1(int n) {
+		// 将该整数-1 并与原整数进行与操作，会将原整数最右边的1变为0.有多少个1，则进行多少次操作。
+		int count = 0;
+		while (n != 0) {
+			n = (n - 1) & n;
+			count++;
+		}
+		return count;
+	}
+
+	// 11.数值的整数次方
+	boolean invalidInput = false;// 全局变量
+
+	public double Power(double base, int exponent) {
+		invalidInput = false;
+		if (exponent < 0 && equal(base, 0.0)) {
+			invalidInput = true;
+			return 0.0;
+		}
+		int absExponent = exponent;
+		if (exponent < 0) {
+			absExponent = -exponent;
+		}
+		double result = PowerWithUnsignedExponent(base, absExponent);
+		if (exponent < 0) {
+			result = 1 / result;
+		}
+		return result;
+	}
+
+	double PowerWithUnsignedExponent(double base, int exponent) {
+		// 递归方式实现
+		if (exponent == 0)
+			return 1;
+		if (exponent == 1)
+			return base;
+
+		double result = PowerWithUnsignedExponent(base, exponent >> 1);// 右移表示
+																		// 除以2
+		result *= result;
+		if ((exponent & 0x1) == 1) { // 与1与判奇偶
+			result *= base;
+		}
+		return result;
+	}
+
+	boolean equal(double n1, double n2) {
+		if ((n1 - n2 > -0.0000001) && (n1 - n2) < 0.0000001)
+			return true;
+		else
+			return false;
+	}
+
+	// 12.调整数组顺序使奇数位于偶数前面
+	public void reOrderArray(int[] a) {
+		if (a == null || a.length == 0)
+			return;
+		int i = 0, j;
+		while (i < a.length) {
+			while (i < a.length && !isEven(a[i])) // i从左向右找到第一个偶数
+				i++;
+			j = i + 1;// j从下一个开始搜索第一个奇数
+			while (j < a.length && isEven(a[j]))
+				j++;
+			if (j < a.length) { // 找到奇数后，将所有偶数后移，并在前面插入奇数
+				int tmp = a[j];
+				for (int j2 = j - 1; j2 >= i; j2--) {
+					a[j2 + 1] = a[j2];
+				}
+				a[i++] = tmp;
+			} else {
+				break;
+			}
+		}
+	}
+
+	boolean isEven(int n) {
+		if (n % 2 == 0)
+			return true;
+		return false;
+	}
+
+	// 13.链表中倒数第k个结点
+	public ListNode FindKthToTail(ListNode head, int k) {
+		if (head == null || k == 0)
+			return null;
+
+		ListNode p1 = head;
+		ListNode p2 = head;
+
+		for (int i = 0; i < k - 1; i++) {
+			if (p1.next != null)
+				p1 = p1.next;
+			else
+				return null;
+		}
+		while (p1.next != null) {
+			p1 = p1.next;
+			p2 = p2.next;
+		}
+		return p2;
+	}
+
+	// 14.反转链表
+	public ListNode ReverseList(ListNode head) {
+		if (head == null)
+			return null;
+		ListNode pReverseNode = null;
+		ListNode node = head;
+		ListNode preNode = null;
+		while (node != null) {
+			ListNode nextNode = node.next;
+			if (nextNode == null) {
+				pReverseNode = node;
+			}
+			node.next = preNode;
+			preNode = node;
+			node = nextNode;
+		}
+		return pReverseNode;
+	}
+
+	// 15.合并两个排序的链表
+	public ListNode Merge(ListNode list1, ListNode list2) {
+		if (list1 == null)
+			return list2;
+		if (list2 == null)
+			return list1;
+
+		if (list1.val < list2.val) {
+			list1.next = Merge(list1.next, list2);
+			return list1;
+		} else {
+			list2.next = Merge(list1, list2.next);
+			return list2;
+		}
+
+	}
+
 }
