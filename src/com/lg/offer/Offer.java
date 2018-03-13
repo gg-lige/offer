@@ -1,7 +1,10 @@
 package com.lg.offer;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Stack;
+import java.util.Vector;
 
 public class Offer {
 	// 1.二维数组中的查找
@@ -351,4 +354,166 @@ public class Offer {
 
 	}
 
+	// 16.树的子结构
+	public boolean HasSubtree(TreeNode root1, TreeNode root2) {
+		boolean result = false;
+		if (root1 != null && root2 != null) {
+			if (root1.val == root2.val) {
+				result = ifHasSubtree(root1, root2);
+			}
+			if (!result) {
+				result = HasSubtree(root1.left, root2);
+			}
+			if (!result) {
+				result = HasSubtree(root1.right, root2);
+			}
+		}
+		return result;
+	}
+
+	private boolean ifHasSubtree(TreeNode root1, TreeNode root2) {
+		if (root2 == null)
+			return true;// 注意先判断这个。表明将B的每个节点都判断过了
+		if (root1 == null)
+			return false;
+
+		if (root1.val != root2.val)
+			return false;
+
+		return ifHasSubtree(root1.left, root2.left) && ifHasSubtree(root1.right, root2.right);
+
+	}
+
+	// 17.二叉树的镜像
+	public void Mirror(TreeNode root) {
+		if (root == null)
+			return;
+		if (root.left == null && root.right == null)
+			return;
+		TreeNode temp = root.left;
+		root.left = root.right;
+		root.right = temp;
+
+		if (root.left != null)
+			Mirror(root.left);
+		if (root.right != null)
+			Mirror(root.right);
+
+	}
+
+	// 18.顺时针打印矩阵
+	ArrayList<Integer> result = new ArrayList<Integer>();
+
+	public ArrayList<Integer> printMatrix(int[][] matrix) {
+		int rows = matrix.length;
+		int cols = matrix[0].length;
+		if (matrix == null || rows <= 0 || cols <= 0)
+			return null;
+
+		int start = 0; // 左上角开始坐标，可以理解为圈数
+		while (start * 2 < rows && start * 2 < cols) {
+			result = printInCircle(matrix, cols, rows, start);
+			start++;
+		}
+		return result;
+	}
+
+	private ArrayList<Integer> printInCircle(int[][] matrix, int col, int row, int start) {
+		int endX = col - start - 1;
+		int endY = row - start - 1;
+		// 打印第一行，从左到右横着打
+		for (int i = start; i <= endX; i++)
+			result.add(matrix[start][i]);
+
+		// 从上到下打印一列
+		if (start < endY) {
+			for (int i = start + 1; i <= endY; i++)
+				result.add(matrix[i][endX]);
+		}
+
+		// 从右到左打印一行
+		if (start < endX && start < endY) {
+			for (int i = endX - 1; i >= start; i--)
+				result.add(matrix[endY][i]);
+		}
+
+		// 从下到上打印一列
+		if (start < endX && start < endY - 1) {
+			for (int i = endY - 1; i >= start + 1; i--)
+				result.add(matrix[i][start]);
+		}
+		return result;
+	}
+
+	// 19.包含min函数的栈
+	private Stack<Integer> data = new Stack<Integer>();
+	private Stack<Integer> ass = new Stack<Integer>();
+
+	public void push2(int node) {
+		data.push(node);
+		if (ass.empty() || ass.peek() > node)
+			ass.push(node); // 辅助栈中存每次操作的最小值
+		else
+			ass.push(ass.peek());
+	}
+
+	public void pop2() {
+		if (data.empty() || ass.empty())
+			return;
+		data.pop();
+		ass.pop();
+	}
+
+	public int top() {
+		if (data.empty())
+			return (Integer) null;
+		else
+			return data.peek();
+	}
+
+	public int min() {
+		if (ass.empty())
+			return (Integer) null;
+		else
+			return ass.peek();
+	}
+
+	// 20.栈的压入、弹出序列
+	public boolean IsPopOrder(int[] pushA, int[] popA) {
+		if (pushA.length == 0 || popA.length == 0)
+			return false;
+		Stack<Integer> s = new Stack<Integer>();
+		// 用于标识弹出序列的位置
+		int popIndex = 0;
+		for (int i = 0; i < pushA.length; i++) {
+			s.push(pushA[i]);// 如果栈不为空，且栈顶元素等于弹出序列
+			while (!s.empty() && s.peek() == popA[popIndex]) {
+				// 出栈
+				s.pop();
+				// 弹出序列向后一位
+				popIndex++;
+			}
+		}
+		return s.empty();
+	}
+
+	// 21.从上往下打印二叉树
+	public ArrayList<Integer> PrintFromTopToBottom(TreeNode root) {
+		ArrayList<Integer> result = new ArrayList<Integer>();
+		if (root == null)
+			return result;
+		Queue<TreeNode> q = new LinkedList<TreeNode>();
+		q.offer(root);
+		while (!q.isEmpty()) {
+			TreeNode treeNode = q.poll();
+			if (treeNode.left != null) {
+				q.offer(treeNode.left);
+			}
+			if (treeNode.right != null) {
+				q.offer(treeNode.right);
+			}
+			result.add(treeNode.val);
+		}
+		return result;
+	}
 }
