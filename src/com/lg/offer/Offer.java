@@ -516,4 +516,95 @@ public class Offer {
 		}
 		return result;
 	}
+
+	// 22.二叉搜索树的后序遍历序列
+	public boolean VerifySquenceOfBST(int[] sequence) {
+		if (sequence.length <= 0 || sequence == null)
+			return false;
+
+		return verifySequenceOfBST(sequence, 0, sequence.length - 1);
+	}
+
+	private boolean verifySequenceOfBST(int[] sequence, int start, int end) {
+		if (start >= end)
+			return true;
+		int index = start;
+		while (index < end - 1 && sequence[index] < sequence[end]) {
+			index++;
+		}
+		int right = index;
+		while (index < end - 1 && sequence[index] > sequence[end]) {
+			index++;
+		}
+		if (index != end - 1) {
+			return false;
+		}
+		index = right;
+		return verifySequenceOfBST(sequence, start, index - 1) && verifySequenceOfBST(sequence, index, end - 1);
+
+	}
+
+	//删除链表中重复的结点
+	public ListNode deleteDuplication(ListNode pHead) {
+		if (pHead == null || pHead.next == null)
+			return pHead;
+
+		ListNode pre = null;
+		ListNode cur = pHead;
+
+		while (cur != null) {
+			ListNode next = cur.next;
+			if (next != null && cur.val == next.val) {
+				while (cur.val == next.val) {
+					cur = cur.next;
+				}
+				pre.next = cur.next;
+
+			} else {
+				cur = cur.next;
+				if (pre == null)
+					pre = pHead;
+				else
+					pre = pre.next;
+			}
+		}
+		return pHead;
+	}
+
+	// 两个链表中的第一个公共子节点
+	public ListNode FindFirstCommonNode(ListNode pHead1, ListNode pHead2) {
+		if (pHead1 == null || pHead2 == null)
+			return null;
+
+		int length1 = getLength(pHead1);
+		int length2 = getLength(pHead2);
+		int len = Math.abs(length1 - length2);
+
+		ListNode longLink = pHead1;
+		ListNode shortLink = pHead2;
+		if (length1 < length2) {
+			longLink = pHead2;
+			shortLink = pHead1;
+		}
+
+		for (int i = 0; i < len; i++) {
+			longLink = longLink.next;
+		}
+
+		while (longLink != null && shortLink != null && longLink.val != shortLink.val) {
+			longLink = longLink.next;
+			shortLink = shortLink.next;
+
+		}
+		return longLink;
+	}
+
+	public static int getLength(ListNode node) {
+		int n = 1;
+		while (node.next != null) {
+			n++;
+			node = node.next;
+		}
+		return n;
+	}
 }
